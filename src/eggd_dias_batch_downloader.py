@@ -191,6 +191,9 @@ def describe_batch_job(
     ValueError
         If the specified job ID does not correspond to an eggd_dias_batch job.
 
+    ValueError
+        If the specified job is not in 'done' state.
+
     Returns
     -------
     dict
