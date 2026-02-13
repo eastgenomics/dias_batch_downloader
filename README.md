@@ -10,7 +10,7 @@ Firstly, the app gathers files (e.g. QC status file and MultiQC) directly from t
 
 Next, the app calls dxpy `describe()` on all of the jobs launched by eggd_dias_batch (as provided via the `launched_jobs` output of the batch job). It retreives the names of all the launched jobs, if a job's name matches one of the jobs listed in the config (under the `exec_regex` key), then the corresponding dictionary path(s) are used to retrieve the file(s) (e.g. SNV/CNV/mosaic reports, athena reports, and artemis file).
 
-Once the specified files have been gathered, varaint report files (listed under the `filter_reports` key of the config) are filtered to remove reports with 0 variants, as declared in the reports file details metadata in DNAnexus.
+Once the specified files have been gathered, varaint report files (listed under the `filter_reports` key of the config) are filtered to remove reports with 0 variants, as declared in the report's file details metadata in DNAnexus.
 
 A summary of the files gathered for download is printed (see [description of the summary text](#what-are-the-outputs) below).
 
@@ -19,7 +19,7 @@ If specified, the app checks for any potential file overwrites and skips downloa
 The gathered and filtered files are then downloaded to the desired output directory (see [Output directory options section](#output-directory-options) below) and a check is run to ensure the output directory contains the expected files after download.
 
 ## What are the typical use cases for this app?
-This app can be used to return data to scientists when processing a Dias (CEN/TWE) run/re-analysis. It downloads the necessary files to either:
+This app can be used to return data to scientists when processing a Dias (CEN/TWE) run/re-analysis. It can download the necessary files to either:
 - a new directory (when processing a new run)
 - an existing directory (when processing a re-analysis)
 - the current working directory (for ad-hoc or custom downloads)
