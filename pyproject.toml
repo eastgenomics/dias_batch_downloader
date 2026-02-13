@@ -1,0 +1,12 @@
+[tool.ruff]
+target-version = "py313"
+indent-width = 4
+line-length = 79
+fix = false
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.format]
+indent-style = "space"
+quote-style = "double"
