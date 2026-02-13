@@ -97,7 +97,6 @@ def parse_args() -> argparse.Namespace:
         help="Path to the log file where logs will be written"
     )
 
-
     args = parser.parse_args()
 
     return args
@@ -201,8 +200,14 @@ def describe_batch_job(
     desc_dict = dxpy.bindings.DXJob(dxid=batch_job_id).describe(fields=fields)
     if not re.search(exec_regex, desc_dict["executableName"]):
         raise ValueError(
-            f"The specified job ID {batch_job_id} does not correspond to an "
+            f"The specified job ({batch_job_id}) does not correspond to an "
             "eggd_dias_batch job."
+        )
+    if desc_dict["state"] != "done":
+        raise ValueError(
+            f"The specified job ({batch_job_id}) is not in 'done' state, "
+            f"current state is '{desc_dict['state']}'. Only batch jobs in "
+            "'done' state can be used for downloading files."
         )
 
     return desc_dict
