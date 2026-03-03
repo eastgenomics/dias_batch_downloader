@@ -1,3 +1,5 @@
+#!/opt/eggd_dias_batch_downloader/venvs/current/bin/python
+
 """Download files associated with an eggd_dias_batch job."""
 import argparse
 import importlib.util
@@ -166,7 +168,13 @@ def load_config(config_path: Path) -> Dict[str, Any]:
     module = importlib.util.module_from_spec(spec)
     sys.modules[config_path.name] = module
     spec.loader.exec_module(module)
-    return module.CONFIG
+    config = module.CONFIG
+    logging.debug(
+        "Config version: %s", config.get(
+            "version", "version key not found in config"
+        )
+    )
+    return config
 
 
 def describe_batch_job(

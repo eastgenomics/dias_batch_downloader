@@ -1,5 +1,2 @@
-dxpy==0.403.0
-pip==25.3
-ruff==0.15.0
-setuptools==80.10.2
-wheel==0.46.3
+dxpy
+pip
