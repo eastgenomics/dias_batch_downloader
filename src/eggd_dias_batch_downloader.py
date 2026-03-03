@@ -15,6 +15,7 @@ from typing import Any, Callable, Optional, List, Dict, Tuple, Set
 
 import dxpy
 
+VERSION = "1.0.0"
 
 def parse_args() -> argparse.Namespace:
     """
@@ -866,12 +867,12 @@ def download_single_file(file_dict: Dict, project: str) -> None:
 
 
 def main():
+    logging.debug("Running eggd_dias_batch_downloader v%s", VERSION)
     args = parse_args()
     configure_logging(log_level=args.log_level.upper(), log_file=args.log_file)
 
     config = load_config(args.config_file)
-    logging.debug("Config %s loaded:\n %s", args.config_file, json.dumps(
-        config, indent=2))
+    logging.debug("Config loaded:\n %s", json.dumps(config, indent=2))
 
     logging.debug("Reading batch job (%s) metadata...", args.batch_job_id)
     batch_job_dx_desc = describe_batch_job(
