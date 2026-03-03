@@ -8,8 +8,8 @@ import re
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from logging.handlers import RotatingFileHandler
-from pathlib import Path, PureWindowsPath
-from typing import Any, Callable, Optional
+from pathlib import Path
+from typing import Any, Callable, Optional, List, Dict, Tuple, Set
 
 import dxpy
 
@@ -146,7 +146,7 @@ def configure_logging(
     logging.getLogger("urllib3.util.retry").setLevel(logging.WARNING)
 
 
-def load_config(config_path: Path) -> dict:
+def load_config(config_path: Path) -> Dict[str, Any]:
     """
     Load the configuration file
 
@@ -171,9 +171,9 @@ def load_config(config_path: Path) -> dict:
 
 def describe_batch_job(
     batch_job_id: str,
-    fields: dict,
+    fields: Dict[str, bool],
     exec_regex: str
-) -> dict:
+) -> Dict[str, Any]:
     """
     Describe a DNAnexus batch job and return the description dictionary.
 
@@ -216,7 +216,7 @@ def describe_batch_job(
     return desc_dict
 
 
-def get_files_in_cwd() -> set:
+def get_files_in_cwd() -> Set[str]:
     """
     Get the set of file names in the current working directory (non-recursive).
 
@@ -238,7 +238,7 @@ def configure_output_directory(
     dry_run: bool,
     project_id: str,
     assay: str,
-    output_config: dict
+    output_config: Dict
 ) -> str:
     """
     Configure the output directory for downloading files.
@@ -297,7 +297,7 @@ def configure_output_directory(
     return output_dir
 
 
-def traverse_dict(d: dict, path: list) -> Optional[Any]:
+def traverse_dict(d: Dict, path: List) -> Optional[Any]:
     """Traverse a dictionary using a list of keys as a path."""
     for key in path:
         d = d.get(key)
@@ -307,7 +307,7 @@ def traverse_dict(d: dict, path: list) -> Optional[Any]:
     return d
 
 
-def get_batch_job_file_ids(desc_dict: dict, query_config: dict) -> dict:
+def get_batch_job_file_ids(desc_dict: Dict, query_config: Dict) -> Dict:
     """
     For each file type (key) in the config dict, extract file IDs from a dx
     describe dictionary describing a eggd_dias_batch job, using paths defined
@@ -348,12 +348,12 @@ def get_batch_job_file_ids(desc_dict: dict, query_config: dict) -> dict:
 
 def call_in_parallel(
     func: Callable,
-    items: list,
+    items: List,
     max_workers: int,
     ignore_missing: bool = True,
     ignore_all_errors: bool = True,
     **kwargs
-) -> list:
+) -> List:
     """
     Calls the given function in parallel using concurrent.futures on
     the given set of items (i.e for calling dxpy.describe() on multiple
@@ -422,9 +422,9 @@ def call_in_parallel(
 
 
 def get_launched_job_file_ids(
-    desc_dicts: list[dict],
-    query_config: dict
-) -> tuple[dict[str, list[str]], dict[str, dict[str, int]]]:
+    desc_dicts: List[Dict],
+    query_config: Dict
+) -> Tuple[Dict[str, List[str]], Dict[str, Dict[str, int]]]:
     """
     Extracts output file IDs from dx describe dictionies describing the jobs
     launched by eggd_dias_batch.
@@ -494,7 +494,7 @@ def get_launched_job_file_ids(
     return dx_ids, sample_exec_counts
 
 
-def get_details(file_id: str, project_id: str) -> tuple[str, dict]:
+def get_details(file_id: str, project_id: str) -> Tuple[str, Dict]:
     """
     Get details of a file in DNAnexus
 
@@ -583,7 +583,7 @@ def linux_to_windows_path(
     linux_path: str,
     linux_prefix: str,
     windows_prefix: str
-) -> PureWindowsPath:
+) -> str:
     """
     Convert a Linux file path to a Windows file path.
 
@@ -602,20 +602,18 @@ def linux_to_windows_path(
 
     Returns
     -------
-    PureWindowsPath
+    str
         The converted Windows-compatible file path.
     """
-    # Remove linux prefix
-    relative_path = linux_path.removeprefix(linux_prefix).lstrip("/")
-
-    # Add windows prefix and convert to PureWindowsPath
-    return PureWindowsPath(windows_prefix) / relative_path
+    stripped_path = linux_path.removeprefix(linux_prefix)
+    joined_path = windows_prefix + stripped_path
+    return joined_path.replace("/", "\\")
 
 
 def gather_and_summarise_non_report_files(
-    non_report_files: dict,
-    summary_text_buffer: list[str],
-    file_ids_for_download: list[str],
+    non_report_files: Dict,
+    summary_text_buffer: List[str],
+    file_ids_for_download: List[str],
     indent: str = "\t"
 ) -> None:
     """
@@ -648,9 +646,9 @@ def gather_and_summarise_non_report_files(
 
 
 def gather_and_summarise_report_files(
-    filtered_reports: dict,
-    summary_text_buffer: list[str],
-    file_ids_for_download: list[str],
+    filtered_reports: Dict,
+    summary_text_buffer: List[str],
+    file_ids_for_download: List[str],
     indent: str = "\t"
 ) -> None:
     """
@@ -688,8 +686,8 @@ def gather_and_summarise_report_files(
 
 
 def summarise_sample_exec_counts(
-    sample_exec_counts: dict[str, dict[str, int]],
-    summary_text_buffer: list[str],
+    sample_exec_counts: Dict[str, Dict[str, int]],
+    summary_text_buffer: List[str],
     indent: str = "\t"
 ) -> None:
     """
@@ -746,9 +744,9 @@ def summarise_sample_exec_counts(
 
 
 def check_file_overwrites(
-    files_for_download: list[dict],
+    files_for_download: List[Dict[str, str]],
     files_before_download: set
-) -> list[dict[str, str]]:
+) -> List[Dict[str, str]]:
     """
     Checks a list of files intended for download against a set
     of files already present in the output directory. If a file with the same
@@ -797,9 +795,9 @@ def check_file_overwrites(
 
 
 def check_files_after_download(
-    files_before_download: set,
-    files_for_download: set,
-    files_after_download: set
+    files_before_download: Set[str],
+    files_for_download: Set[str],
+    files_after_download: Set[str]
 ) -> None:
     """
     Checks whether the expected files are present in the output directory after
@@ -836,7 +834,7 @@ def check_files_after_download(
         )
 
 
-def download_single_file(file_dict: dict, project: str) -> None:
+def download_single_file(file_dict: Dict, project: str) -> None:
     """
     Download a dx file using the specified file id and filename in the context
     of the specified project.
@@ -928,17 +926,16 @@ def main():
     logging.debug("Collecting file IDs for download...")
     file_ids_for_download = []
     summary_text_buffer = []
+    windows_path = linux_to_windows_path(
+        output_dir,
+        output_config['linux_prefix'],
+        output_config['windows_prefix']
+    )
     summary_text_buffer.append(
         f"\nJob ID: {args.batch_job_id}\n"
         f"\nDownload folder:\n"
         f"\tServer path: '{output_dir}'\n"
-        f"\tWindows path: '{
-            linux_to_windows_path(
-                output_dir,
-                output_config['linux_prefix'],
-                output_config['windows_prefix']
-            )
-        }'\n"
+        f"\tWindows path: '{windows_path}'\n"
         f"\nFiles to be downloaded:\n"
     )
 
@@ -988,6 +985,7 @@ def main():
             files_before_download
         )
 
+    print("Downloading files...")
     # Download files in parallel and check output directory for expected files
     if not args.dry_run:
         logging.debug("Downloading files to: %s", os.getcwd())
