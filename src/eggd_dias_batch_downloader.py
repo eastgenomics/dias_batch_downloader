@@ -307,7 +307,25 @@ def configure_output_directory(
 
 
 def traverse_dict(d: Dict, path: List) -> Optional[Any]:
-    """Traverse a dictionary using a list of keys as a path."""
+    """
+    Traverse a dictionary using a list of keys as a path.
+
+    Iterates through the provided list of keys, accessing nested values in the
+    dictionary. If any key in the path is not found, returns None.
+
+    Parameters
+    ----------
+    d : dict
+        The dictionary to traverse.
+    path : list
+        A list of keys representing the path to traverse through the dict.
+
+    Returns
+    -------
+    any or None
+        The value at the end of the path, or None if the path cannot be fully
+        traversed.
+    """
     for key in path:
         d = d.get(key)
         # If specified path cannot be fully traversed, return None
@@ -837,9 +855,9 @@ def check_files_after_download(
     expected_files = files_before_download | files_for_download
     if expected_files != files_after_download:
         missing = expected_files ^ files_after_download
-        logging.warning(
+        raise RuntimeError(
             "Unexpected number of files in directory after download.\n"
-            "Missing files:\n %s", missing
+            f"Missing files:\n{missing}"
         )
 
 
