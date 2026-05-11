@@ -67,6 +67,12 @@ def load_config(config_path: Path) -> Dict[str, Any]:
     module = importlib.util.module_from_spec(spec)
     sys.modules[config_path.name] = module
     spec.loader.exec_module(module)
+
+    if not hasattr(module, 'CONFIG'):
+        raise ValueError(
+            f"Config file {config_path} must define a CONFIG object"
+        )
+
     config = module.CONFIG
     logging.debug(
         "Config version: %s",

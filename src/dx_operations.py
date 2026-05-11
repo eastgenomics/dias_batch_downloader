@@ -111,10 +111,23 @@ def configure_output_directory(
     output_dir = os.path.join(output_config["folder_paths"][assay], run_name)
 
     if make_output_dir and not dry_run:
-        os.mkdir(output_dir)
+        try:
+            os.mkdir(output_dir)
+        except FileExistsError:
+            raise RuntimeError(
+                f"Output directory '{output_dir}' already exists. Use the "
+                "argument `--find-output-dir` to navigate to it or verify the "
+                "path."
+            )
         logging.debug("Created output directory: %s", output_dir)
 
     if find_output_dir or (make_output_dir and not dry_run):
+        if not os.path.exists(output_dir):
+            raise RuntimeError(
+                f"Output directory '{output_dir}' not found. "
+                "Use the argument `--make-output-dir` to create it or verify "
+                " the path."
+            )
         os.chdir(output_dir)
         logging.debug("Changed into output directory: %s", output_dir)
 

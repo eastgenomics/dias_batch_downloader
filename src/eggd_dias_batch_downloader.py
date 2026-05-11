@@ -142,6 +142,13 @@ def main():
         exec_regex=config["batch_job_query"]["exec_regex"],
     )
 
+    assay = batch_job_dx_desc["input"].get("assay")
+    if not assay:
+        raise ValueError(
+            f"The input dict for batch job {args.batch_job_id} is missing "
+            "the required 'assay' key"
+        )
+
     project_id = batch_job_dx_desc["project"]
     output_config = config["output_config"]
     output_dir = configure_output_directory(
@@ -149,7 +156,7 @@ def main():
         find_output_dir=args.find_output_dir,
         dry_run=args.dry_run,
         project_id=project_id,
-        assay=batch_job_dx_desc["input"]["assay"],
+        assay=assay,
         output_config=output_config,
     )
 
@@ -158,7 +165,7 @@ def main():
         query_config=config["batch_job_query"]["files"],
     )
 
-    launched_jobs = batch_job_dx_desc["output"]["launched_jobs"].split(",")
+    launched_jobs = [j.strip() for j in batch_job_dx_desc["output"]["launched_jobs"].split(",")]
     logging.debug("DX describing launched jobs: %s", launched_jobs)
     max_workers = config["max_workers"]
     launched_job_desc_dicts = call_in_parallel(

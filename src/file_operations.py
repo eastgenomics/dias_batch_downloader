@@ -103,8 +103,10 @@ def check_files_after_download(
     )
     expected_files = files_before_download | files_for_download
     if expected_files != files_after_download:
-        missing = expected_files ^ files_after_download
+        missing = expected_files - files_after_download
+        unexpected = files_after_download - expected_files
         raise RuntimeError(
             "Unexpected number of files in directory after download.\n"
-            f"Missing files:\n{missing}"
+            f"Missing files:\n{missing}\n"
+            f"Unexpected files:\n{unexpected}"
         )
