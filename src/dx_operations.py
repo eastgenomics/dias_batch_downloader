@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import dxpy
@@ -60,7 +61,7 @@ def configure_output_directory(
     project_id: str,
     assay: str,
     output_config: Dict,
-) -> str:
+) -> Path:
     """
     Configure the output directory for downloading files.
 
@@ -84,11 +85,11 @@ def configure_output_directory(
 
     Returns
     -------
-    str
-        str to the configured output directory.
+    Path
+        Path to the configured output directory.
     """
     if not make_output_dir and not find_output_dir:
-        cwd = os.getcwd()
+        cwd = Path.cwd()
         logging.debug(
             "No output directory options specified, downloading "
             "files to current working directory: %s",
@@ -116,13 +117,13 @@ def configure_output_directory(
             "Please verify the assay name and configuration."
         ) from e
 
-    output_dir = os.path.join(folder_path, run_name)
+    output_dir = Path(folder_path) / run_name
 
     if make_output_dir and not dry_run:
         try:
-            os.mkdir(output_dir)
+            output_dir.mkdir()
         except FileExistsError as e:
-            raise RuntimeError(
+            raise FileExistsError(
                 f"Output directory '{output_dir}' already exists. Use the "
                 "argument `--find-output-dir` to navigate to it or verify the "
                 "path."
@@ -130,8 +131,8 @@ def configure_output_directory(
         logging.debug("Created output directory: %s", output_dir)
 
     if find_output_dir or (make_output_dir and not dry_run):
-        if not os.path.exists(output_dir):
-            raise RuntimeError(
+        if not output_dir.exists():
+            raise OSError(
                 f"Output directory '{output_dir}' not found. "
                 "Use the argument `--make-output-dir` to create it or verify "
                 " the path."

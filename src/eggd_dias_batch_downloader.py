@@ -144,7 +144,7 @@ def main():
 
     assay = batch_job_dx_desc["input"].get("assay")
     if not assay:
-        raise ValueError(
+        raise KeyError(
             f"The input dict for batch job {args.batch_job_id} is missing "
             "the required 'assay' key"
         )
@@ -203,7 +203,7 @@ def main():
     file_ids_for_download = []
     summary_text_buffer = []
     windows_path = linux_to_windows_path(
-        output_dir,
+        str(output_dir),
         output_config["linux_prefix"],
         output_config["windows_prefix"],
     )
