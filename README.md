@@ -48,7 +48,7 @@ This app can be used to download `eggd_dias_batch` associated files (as specifie
 >[!NOTE]
 > If neither `--make-output-dir` nor `--find-output-dir` are specified, files will be downloaded to the current working directory.
   - #### Dry run (`--dry-run`):
-    - If used with --find-output-dir, find and change into output directory, but do not download files. If used with `--make-output-dir`, do not make output directory or download files, but return the download location that would be used in the summary text.
+    - If used with `--find-output-dir`, find and change into output directory, but do not download files. If used with `--make-output-dir`, do not make output directory or download files, but return the download location that would be used in the summary text.
   - #### Overwrite (`--overwrite`):
     - Use the `--overwrite` flag to overwrite existing files during the download process.
   - #### Log level (`--log-level`):
