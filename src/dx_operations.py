@@ -108,17 +108,25 @@ def configure_output_directory(
             f"{project_name}"
         )
 
-    output_dir = os.path.join(output_config["folder_paths"][assay], run_name)
+    try:
+        folder_path = output_config["folder_paths"][assay]
+    except KeyError as e:
+        raise ValueError(
+            f"Assay '{assay}' not found in output configuration. "
+            "Please verify the assay name and configuration."
+        ) from e
+
+    output_dir = os.path.join(folder_path, run_name)
 
     if make_output_dir and not dry_run:
         try:
             os.mkdir(output_dir)
-        except FileExistsError:
+        except FileExistsError as e:
             raise RuntimeError(
                 f"Output directory '{output_dir}' already exists. Use the "
                 "argument `--find-output-dir` to navigate to it or verify the "
                 "path."
-            )
+            ) from e
         logging.debug("Created output directory: %s", output_dir)
 
     if find_output_dir or (make_output_dir and not dry_run):
@@ -315,7 +323,8 @@ def download_single_file(file_dict: Dict, project: str) -> None:
     Parameters
     ----------
     file_dict : dict
-        dictionary containing file ID and name
+        dictionary with required keys: 'id' (str) and 'name' (str)
+        corresponding to the file ID and filename of the file to be downloaded.
     project : str
         project containing the file
 
