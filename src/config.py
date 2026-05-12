@@ -68,7 +68,7 @@ def load_config(config_path: Path) -> Dict[str, Any]:
     sys.modules[config_path.name] = module
     spec.loader.exec_module(module)
 
-    if not hasattr(module, 'CONFIG'):
+    if not hasattr(module, "CONFIG"):
         raise ValueError(
             f"Config file {config_path} must define a CONFIG object"
         )

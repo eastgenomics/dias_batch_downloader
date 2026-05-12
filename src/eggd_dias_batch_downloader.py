@@ -165,7 +165,10 @@ def main():
         query_config=config["batch_job_query"]["files"],
     )
 
-    launched_jobs = [j.strip() for j in batch_job_dx_desc["output"]["launched_jobs"].split(",")]
+    launched_jobs = [
+        j.strip()
+        for j in batch_job_dx_desc["output"]["launched_jobs"].split(",")
+    ]
     logging.debug("DX describing launched jobs: %s", launched_jobs)
     max_workers = config["max_workers"]
     launched_job_desc_dicts = call_in_parallel(
