@@ -112,7 +112,7 @@ def configure_output_directory(
     try:
         folder_path = output_config["folder_paths"][assay]
     except KeyError as e:
-        raise ValueError(
+        raise KeyError(
             f"Assay '{assay}' not found in output configuration. "
             "Please verify the assay name and configuration."
         ) from e
