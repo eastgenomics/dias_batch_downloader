@@ -1,2 +1,9 @@
-dxpy
-pip
+argcomplete==3.6.3
+awscrt==0.32.2
+certifi==2026.4.22
+crc32c==2.8
+dxpy==0.408.2
+psutil==7.2.2
+python-dateutil==2.9.0.post0
+six==1.17.0
+urllib3==2.6.3
