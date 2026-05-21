@@ -76,8 +76,4 @@ def load_config(config_path: Path) -> Dict[str, Any]:
         )
 
     config = module.CONFIG
-    logging.debug(
-        "Config version: %s",
-        config.get("version", "version key not found in config"),
-    )
     return config
