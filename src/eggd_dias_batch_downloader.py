@@ -240,7 +240,7 @@ def main():
             sample_exec_counts=sample_exec_counts,
             summary_text_buffer=summary_text_buffer,
         )
-    print("".join(summary_text_buffer))
+    logging.info("Summary:\n" + "".join(summary_text_buffer))
 
     # Get file names
     files_for_download = call_in_parallel(
