@@ -13,7 +13,8 @@ def configure_logging(log_level: str, log_file: Optional[Path]) -> None:
     Parameters
     ----------
     log_level : str
-        Logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL).
+        Logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL) used for
+        console logs.
     log_file : Path, optional
         Path to the log file. If not provided, logs will be printed to stdout.
 
@@ -34,6 +35,7 @@ def configure_logging(log_level: str, log_file: Optional[Path]) -> None:
         file_handler = RotatingFileHandler(
             log_file, mode="a", maxBytes=1024 * 1024, backupCount=1
         )
+        file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(logging.Formatter(log_format))
         handlers.append(file_handler)
 
