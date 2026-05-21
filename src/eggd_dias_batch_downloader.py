@@ -1,5 +1,3 @@
-#!/opt/eggd_dias_batch_downloader/venvs/current/bin/python
-
 """Download files associated with an eggd_dias_batch job."""
 
 import argparse
