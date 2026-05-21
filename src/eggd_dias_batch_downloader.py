@@ -111,7 +111,7 @@ def parse_args() -> argparse.Namespace:
         "--log-level",
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        help="Set the logging level (default: INFO)",
+        help="Set the logging level for console logs (default: INFO)",
     )
 
     parser.add_argument(
@@ -127,10 +127,12 @@ def parse_args() -> argparse.Namespace:
 
 def main():
     args = parse_args()
-    configure_logging(log_level=args.log_level.upper(), log_file=args.log_file)
-    logging.debug("Running eggd_dias_batch_downloader v%s", VERSION)
-
     config = load_config(args.config_file)
+
+    log_file = args.log_file or config.get("log_file")
+    configure_logging(log_level=args.log_level.upper(), log_file=log_file)
+
+    logging.debug("Running eggd_dias_batch_downloader v%s", VERSION)
     logging.debug("Config loaded:\n %s", json.dumps(config, indent=2))
 
     logging.debug("Reading batch job (%s) metadata...", args.batch_job_id)
